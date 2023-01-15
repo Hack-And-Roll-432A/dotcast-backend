@@ -11,7 +11,6 @@ SCOPE = "streaming user-read-recently-played user-top-read user-read-recently-pl
 #token_data will hold authentication header with access code, the allowed scopes, and the refresh countdown 
 TOKEN_DATA = []
 
-
 def getUser(client_id, client_secret):
     global CLIENT_ID
     global CLIENT_SECRET
@@ -23,7 +22,8 @@ def getUserToken(code):
     global TOKEN_DATA
     TOKEN_DATA = getToken(code, CLIENT_ID, CLIENT_SECRET, "{}:{}/callback/".format(CALLBACK_URL, PORT))
  
-def refreshToken():
+def refreshToken(time):
+    time.sleep(time)
     TOKEN_DATA = refreshAuth()
 
 def getAccessToken():

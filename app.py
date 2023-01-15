@@ -13,22 +13,19 @@ def read_mrt_st():
         
 @app.route('/')
 def index():
+    return "<h1> /mrt_data, /authenticate </h1>"
+
+@app.route('/authenticate')
+def auth():
     response = startup.getUser(app.config['CLIENT_ID'], app.config['CLIENT_SECRET'])
     return redirect(response)
 
 @app.route('/callback/')
-def home():
+def callback():
     startup.getUserToken(request.args['code'])
-    acc_token = startup.getAccessToken()[1]
-    # print("\n ===== acc_token:")
-    # print(acc_token)
-    headers = {"Content-Type" : 'application/json', "Accept" : 'application/json'}
-    headers.update(acc_token)
-    # print("\n ===== headers:")
-    # print(headers)
-    post = requests.get("https://api.spotify.com/v1/me",headers=headers)
-    print(post.text)
-    return post.text
+    # [ACCESS_TOKEN, AUTHENTICATION_HEADER, AUTHORIZED_SCOPES, EXPIRATION]
+    acc_token = dict({"token": startup.getAccessToken()[0]}) 
+    return jsonify(acc_token)
 
 
 if __name__ == '__main__':
