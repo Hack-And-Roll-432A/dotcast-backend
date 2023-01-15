@@ -167,4 +167,5 @@ def generate_playlist():
 
 if __name__ == '__main__':
     app.config.from_file("auth/config.json", load=json.load)
+    # app.run("0.0.0.0", port=8081, debug=True)
     app.run(port=8081, debug=True)
