@@ -17,6 +17,20 @@ def read_mrt_st() -> dict[str, str]:
 def index():
     return "<h1> /authenticate /get_duration /generate </h1>"
 
+def get_user_id(token) -> str:
+    url = f"https://api.spotify.com/v1/me/"
+    headers = {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "Authorization": None,
+    }
+    headers["Authorization"] = f"Bearer {token}"
+    data = requests.get(url, headers=headers)
+    data_json = data.json()
+    user_id = data_json["id"]
+    # print(user_id)
+    return user_id
+
 @app.route('/authenticate')
 def auth():
     response = startup.getUser(app.config['CLIENT_ID'], app.config['CLIENT_SECRET'])
@@ -26,7 +40,8 @@ def auth():
 def callback():
     startup.getUserToken(request.args['code'])
     # [ACCESS_TOKEN, AUTHENTICATION_HEADER, AUTHORIZED_SCOPES, EXPIRATION]
-    acc_token = dict({"token": startup.getAccessToken()[0]}) 
+    token = startup.getAccessToken()[0]
+    acc_token = dict({"token": token, "user_id": get_user_id(token)}) 
     return jsonify(acc_token)
 
 @app.route('/get_duration', methods=['POST'])
@@ -45,20 +60,6 @@ def retrieve_duration():
     # print(duration)
     return jsonify(duration)
 
-def get_user_id(token) -> str:
-    url = f"https://api.spotify.com/v1/me/"
-    headers = {
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-        "Authorization": None,
-    }
-    headers["Authorization"] = f"Bearer {token}"
-    data = requests.get(url, headers=headers)
-    data_json = data.json()
-    user_id = data_json["id"]
-    # print(user_id)
-    return user_id
-    
 def get_user_saved_show(token):
     url = f"https://api.spotify.com/v1/me/shows"
     headers = {
